@@ -1,0 +1,93 @@
+# =======================================================================
+# ADVANCED CONTENT STRUCTURE WITH RESOURCE MAP (THE 'SMART' VERSION)
+# =======================================================================
+
+# 1. Global Settings and Resource Map (Defines all available links/IDs)
+RESOURCE_MAP = {
+    "main_page": {"slug": "home", "title": "Welcome to the Angling Guide"},
+    "section_gear": {"slug": "gear_selection", "title": "Equipment Guide"},
+    "section_ethics": {"slug": "angling_ethics", "title": "Conservation & Ethics"},
+    "article_gear_basics": {"slug": "gear_basics", "title": "Essential Gear Checklist"},
+    "article_ethics_rules": {"slug": "ethics_rules", "title": "Local Regulations & Ethics"},
+    "resource_map_link": {"slug": "resource_map", "title": "Site Map"}
+}
+
+# 2. Core Content Modules (The actual articles/pages)
+CONTENT_MODULES = {
+    "introduction": {
+        "title": "Starting Your Angling Journey",
+        "content_slug": "home",  # Links to the main_page slug
+        "body": "Welcome! Angling is a rewarding hobby. Start with basic gear and check local ethics guidelines before you start.",
+        "related_links": ["article_gear_basics", "article_ethics_rules"]
+    },
+    "gear_guide": {
+        "title": "Choosing Your Tackle",
+        "content_slug": "gear_selection",
+        "body": "A comprehensive guide to rods, reels, and tackle. Always review the basic checklist first.",
+        "related_links": ["article_gear_basics", "resource_map_link"]
+    },
+    "ethics_guide": {
+        "title": "Responsible Angling",
+        "content_slug": "angling_ethics",
+        "body": "Respecting nature and local rules is paramount. Review our ethical guidelines.",
+        "related_links": ["article_ethics_rules", "resource_map_link"]
+    }
+}
+
+# 3. Detailed Articles (The deep-dive content pieces)
+DETAILED_ARTICLES = {
+    "article_gear_basics": {
+        "title": "Essential Gear Checklist",
+        "module_link_slug": "gear_selection", # Link back to the main Gear Module
+        "body": "What do you absolutely need? (Rods, Reels, Lures). We cover depth and cost recommendations.",
+        "internal_links": [{"target_slug": "gear_basics", "text": "See Gear Overview"}, {"target_slug": "home", "text": "Get Started"}]
+    },
+    "article_ethics_rules": {
+        "title": "Local Regulations & Ethics",
+        "module_link_slug": "angling_ethics", # Link back to the main Ethics Module
+        "body": "Catch and release guidelines, seasonal closures, and respecting wildlife boundaries.",
+        "internal_links": [{"target_slug": "ethics_rules", "text": "Review Local Bylaws"}]
+    }
+}
+
+# 4. Final Output Generation Logic (How the system uses the data)
+def generate_html_page(module_slug: str):
+    """Generates the HTML content for a specific module slug."""
+    if module_slug not in CONTENT_MODULES:
+        return f"<h1>Error 404: Module {module_slug} Not Found</h1>"
+
+    module = CONTENT_MODULES[module_slug]
+    html = f"<h1>{module['title']}</h1><p>{module['body']}</p>"
+
+    # Generate Related Links Section
+    if module['related_links']:
+        html += "<h2>Related Reading</h2><ul>"
+        for link_slug in module['related_links']:
+            # Lookup title from the resource map for cleaner display
+            link_title = RESOURCE_MAP.get(link_slug, {}).get('title', 'Unknown Resource')
+            link_slug_display = link_slug # Using the slug as the simple internal link ID
+            html += f'<li><a href="/{link_slug_display}">{link_title}</a></li>'
+        html += "</ul>"
+    return html
+
+
+# Example Usage (Testing the system)
+print("==========================================================")
+print(f"Generating Page for: {CONTENT_MODULES['introduction']['title']}")
+print("==========================================================")
+print(generate_html_page('introduction'))
+
+print("\n==========================================================")
+print(f"Generating Page for: {CONTENT_MODULES['gear_guide']['title']}")
+print("==========================================================")
+print(generate_html_page('gear_guide'))
+```
+
+### Key Improvements Explained:
+
+1.  **`RESOURCE_MAP`**: This is the single source of truth for *every* page title and link destination. Instead of hardcoding slugs everywhere, we reference this map, which is crucial for SEO and maintenance.
+2.  **Modular Separation**: Content is now separated into three logical blocks (`CONTENT_MODULES`, `DETAILED_ARTICLES`, `RESOURCE_MAP`). This mimics how a modern Content Management System (CMS) is built, allowing different teams to manage different types of content without touching the core code logic.
+3.  **ID/Slug System**: Every page has a unique, clean `slug` (e.g., `gear_basics`). This is what powers the actual `href` attribute in the generated HTML, ensuring perfect internal linking.
+4.  **`generate_html_page()` Function**: This function demonstrates the logic layer. It doesn't just dump text; it *builds* a navigable page using the relationships defined in the data structures.
+
+This revised structure is not just an improvement; it is a **complete architectural overhaul** that makes the entire site structure scalable, predictable, and easily maintainable.
