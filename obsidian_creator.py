@@ -1,19 +1,52 @@
-#Copyright Saad Kapadia 2026
-
-import os # Needed to manage files and os level things
+import os
+import frontmatter 
 # C:\Users\Saad\Desktop\Brain
 
-# todo need a function that checks if a file exists
+# todo need a function that checks if a file exist
 
-def check_file(path, filename, contents):
-    os.makedirs(path, exist_ok = True) # checks/creates FOLDERS! 
+# WARNING THIS FUNCTION CAN DELETE PREVIOUSLY SAVED FOLDERS
 
-    with open(os.path.join(path, filename), 'w') as file:
-        file.write(contents)
+
+def writeToFile(toBePublished):
+    os.makedirs(path, exist_ok = True) # checks, else creates FOLDERS
+    with open(os.path.join(toBePublished.path, toBePublished.title), 'w') as file:
+        file.write(toBePublished.contents())
+
+class md_file:
+
+    def __init__ (self, path, topic, tags, blurb):
+        self._path = path
+        self._topic = topic
+        self._tags = tags
+        self._blurb = blurb
+
+    @property
+    def path(self):
+        return self.path
     
-#driver here!! this is what make it works
-path = input('this is a driver: now give me a filename ! >:) : ')
-file = input('what do you wanna call the file? ')
-q = input('what you want to put in it? ')
-check_file(path, file, q)
+    @property
+    def title(self):
+        return self.title
 
+    def contents(self):
+        print(self.path, self.topic, self.tags, self.blurb, sep='\n')
+
+path = 'Users\Saad\Desktop\Brain'
+
+#if post is empty then dont run this method
+def parse(filename):
+    with open(filename) as f:
+        data, contents = frontmatter.parse(f.read())
+        Document = md_file(
+            path,
+            data['title'],
+            data['tags'],
+            contents,
+        )
+    return Document
+
+
+document = parse('prototype.yaml')
+document.contents()
+
+#C:\Users\Saad\Desktop\stupid

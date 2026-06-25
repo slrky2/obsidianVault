@@ -1,0 +1,53 @@
+---
+title: Big O Notation
+type: concept
+domain: cs
+tags: [algorithms, complexity, fundamentals]
+status: growing
+created: 2026-06-23
+related: ["Time Complexity", "Space Complexity", "Sorting Algorithms"]
+source:
+---
+
+# Big O Notation
+
+Big O notation describes how the runtime or memory usage of an algorithm
+grows as the input size grows. It's a way of talking about *worst-case*
+performance without getting tangled in exact timings (which vary by
+hardware, language, etc).
+
+## Key Points
+
+- Describes growth rate, not exact speed
+- Focuses on the dominant term as input size (`n`) approaches infinity
+- Common classes, from fastest to slowest:
+  - `O(1)` — constant time
+  - `O(log n)` — logarithmic
+  - `O(n)` — linear
+  - `O(n log n)` — linearithmic
+  - `O(n^2)` — quadratic
+  - `O(2^n)` — exponential
+
+## Example
+
+```python
+def find_max(numbers):
+    max_val = numbers[0]
+    for num in numbers:        # loop runs n times
+        if num > max_val:
+            max_val = num
+    return max_val
+```
+
+This function is `O(n)` — runtime grows linearly with the size of `numbers`.
+
+## Why It Matters
+
+When I'm building the fantasy football trade analyzer, this matters for
+things like sorting player rankings or comparing trade values across a
+roster — picking the right algorithm avoids slow lookups as the league's
+player pool grows.
+
+## Open Questions
+
+- How does this play into database query performance (SQL indexing)?
