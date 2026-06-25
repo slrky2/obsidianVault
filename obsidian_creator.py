@@ -9,12 +9,12 @@ import frontmatter
 
 def writeToFile(toBePublished):
     os.makedirs(path, exist_ok = True) # checks, else creates FOLDERS
-    with open(os.path.join(toBePublished.path, toBePublished.title), 'w') as file:
-        file.write(toBePublished.contents())
+    temp = f'{toBePublished.title}.md'
+    with open(os.path.join(path, temp), 'w') as file:
+        file.write(toBePublished.contents)
 
 class md_file:
-
-    def __init__ (self, path, topic, tags, blurb):
+    def __init__(self, path, topic, tags, blurb):
         self._path = path
         self._topic = topic
         self._tags = tags
@@ -22,17 +22,23 @@ class md_file:
 
     @property
     def path(self):
-        return self.path
-    
+        return self._path
+
     @property
     def title(self):
-        return self.title
+        return self._topic
 
+    @property
+    def tags(self):
+        return self._tags
+    
+    @property
     def contents(self):
-        print(self.path, self.topic, self.tags, self.blurb, sep='\n')
+        return self._blurb
 
-path = 'Users\Saad\Desktop\Brain'
+# path = 'Users\Saad\Desktop\Brain'
 
+path = '/Users/saadkapadia/obsidian_Vault'
 #if post is empty then dont run this method
 def parse(filename):
     with open(filename) as f:
@@ -45,8 +51,9 @@ def parse(filename):
         )
     return Document
 
-
 document = parse('prototype.yaml')
-document.contents()
+print(document.title)
 
-#C:\Users\Saad\Desktop\stupid
+writeToFile(document)
+
+# document.contents
