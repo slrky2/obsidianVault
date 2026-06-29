@@ -32,6 +32,10 @@ while True:
             # f.write(json.dumps(stats))
         break
 
+    toWrite.clear()
+    stats["topics"] = set()
+    stats["newTopics"] = set()
+
     given = Path(r"\Users\Saad\Downloads\seed-vault-notes\01-CS-Programming") # REAL VERSION: ASK FOR A FILEPATH
     # given = Path(path)
     if given.is_dir():
@@ -51,8 +55,8 @@ while True:
         new_tags = {tag for tag in document.tags if not obsidianCreator.doesFileExist(destPath, tag)}
         stats["newTopics"].update(new_tags)
 
-    print('wrote: ', stats["topics"])
-    ans = input(f'recommend: {stats["newTopics"]} Write? (Y/N): ')
+    print(f'wrote {len(stats["topics"])} file(s): {stats["topics"]}')
+    ans = input(f'recommended {len(stats["newTopics"])} new topic(s): {stats["newTopics"]} — write them? (Y/N): ')
     if ans == 'Y' or ans == 'y':
         SCHEMA_PROMPT = """You are a notetaker for an Obsidian vault. For the given topic, write a single markdown note with YAML frontmatter followed by a markdown body.
 
