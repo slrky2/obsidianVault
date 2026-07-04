@@ -1,5 +1,6 @@
 import os
 import frontmatter 
+import yaml
 from pathlib import Path
 # C:\Users\Saad\Desktop\Brain
 
@@ -10,12 +11,18 @@ from pathlib import Path
 def writeToFile(toBePublished):
     os.makedirs(toBePublished.path, exist_ok = True) # checks, else creates FOLDERS
     temp = f'{toBePublished.title}.md'
-    with open(Path(path) / temp, 'w') as file:
+    with open(Path(toBePublished.path) / temp, 'w', encoding='utf-8') as file:
+        file.write('---\n')
+        yaml.dump(toBePublished.data, file, sort_keys=False )
+        file.write('---\n')
+
         file.write(toBePublished.contents)
-        for tag in toBePublished.tags:
-            fix = '[[' + tag + ']]'
-            file.write(fix)
-            file.write(' ')
+
+        #COMMENTED OUT FOR NOW
+        # for tag in toBePublished.tags:
+        #     fix = '[[' + tag + ']]'
+        #     file.write(fix)
+        #     file.write(' ')
 
 def doesFileExist(path, tag):
     tag = f'{tag}.md'
@@ -28,17 +35,26 @@ def doesFileExist(path, tag):
             return False
         else:
             return True
-    else: 
+    else:
         return False
+
+#deprecated
+def getNewTags(path, tags):
+    return {tag for tag in tags if not doesFileExist(path, tag)}
 
 # we need to add a deque
 
 class md_file:
-    def __init__(self, path, topic, tags, blurb):
+    def __init__(self, data, path, topic, tags, blurb):
+        self._data = data
         self._path = path
         self._topic = topic
         self._tags = tags
         self._blurb = blurb
+
+    @property
+    def data(self):
+        return self._data
 
     @property
     def path(self):
@@ -56,19 +72,17 @@ class md_file:
     def contents(self):
         return self._blurb
 
-path = r'C:\Users\Saad\Desktop\Brain\Brain' # Windows
-# path = '/Users/saadkapadia/obsidian_Vault' # MAC
-
 #if post is empty then dont run this method
-def parse(filename):
-    with open(filename) as f:
+def parse(filename, dest_path=None):
+    filename = Path(filename)
+    # default: write back into the same directory the file was read from (in-place)
+    if dest_path is None:
+        dest_path = filename.parent
+    with open(filename, encoding='utf-8') as f:
         data, contents = frontmatter.parse(f.read())
-        Document = md_file(
-            path,
-            data['title'],
-            data['tags'],
-            contents,
-        )
+        title = data.get('title', filename.stem)
+        tags = data.get('tags', [])
+        Document = md_file(data, dest_path, title, tags, contents)
     return Document
 
 
